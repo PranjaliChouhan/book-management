@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -15,22 +15,39 @@ const Auth = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   
-  const { login, register } = useAuth();
+  const { login, register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   
+  // Redirect if already authenticated
+  useEffect(() => {
+    console.log("Auth component - isAuthenticated:", isAuthenticated);
+    if (isAuthenticated) {
+      console.log("Already authenticated, redirecting to /books");
+      navigate('/books');
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     
     try {
+      console.log("Auth form submitted, mode:", mode);
       if (mode === AuthMode.LOGIN) {
+        console.log("Attempting login with email:", email);
         await login(email, password);
+        console.log("Login successful, navigating to /books");
       } else {
+        console.log("Attempting registration with name:", name, "and email:", email);
         await register(name, email, password);
+        console.log("Registration successful, navigating to /books");
       }
+      console.log("About to navigate to /books");
       navigate('/books');
+      console.log("Navigation called");
     } catch (err) {
+      console.error("Authentication error:", err);
       setError('Authentication failed. Please check your credentials and try again.');
     } finally {
       setLoading(false);

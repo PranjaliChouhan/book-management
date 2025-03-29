@@ -20,15 +20,14 @@ if (token) {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // If unauthorized, clear token and redirect to login
+    // If unauthorized, clear token but don't redirect
     if (error.response && error.response.status === 401) {
+      console.log("401 Unauthorized response - clearing token");
       localStorage.removeItem('token');
       delete api.defaults.headers.common['Authorization'];
       
-      // Only redirect if not already on the auth page
-      if (!window.location.pathname.includes('/auth')) {
-        window.location.href = '/auth';
-      }
+      // Removed window.location redirect
+      // Let the components handle navigation instead
     }
     return Promise.reject(error);
   }

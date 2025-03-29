@@ -11,11 +11,14 @@ import Books from './pages/Books';
 // Protected route component
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAuth();
+  console.log("ProtectedRoute - isAuthenticated:", isAuthenticated);
   
   if (!isAuthenticated) {
+    console.log("Not authenticated, redirecting to /auth");
     return <Navigate to="/auth" replace />;
   }
   
+  console.log("Authenticated, rendering protected content");
   return children;
 };
 
